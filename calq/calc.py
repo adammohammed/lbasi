@@ -25,6 +25,21 @@ class Interpreter:
             self.errors()
 
     def term(self):
+        result = self.factor()
+
+        while self.current_token.type in (MULT, DIV):
+            op = self.current_token
+            self.eat(op.type)
+            rfactor = self.factor()
+
+            if op.type == MULT:
+                result = result * rfactor
+            elif op.type == DIV:
+                result = result // factor
+
+        return result
+
+    def factor(self):
         token = self.current_token
         self.eat(INTEGER)
         return token.value
@@ -34,10 +49,9 @@ class Interpreter:
 
         result = self.term()
 
-        while self.current_token.type in (PLUS, MINUS, MULT, DIV):
+        while self.current_token.type in (PLUS, MINUS):
             op = self.current_token
-            if op.type in OP_LIST:
-                self.eat(op.type)
+            self.eat(op.type)
 
             term = self.term()
 
@@ -45,10 +59,6 @@ class Interpreter:
                 result = result + term
             elif op.type == MINUS:
                 result = result - term
-            elif op.type == MULT:
-                result = result * term
-            elif op.type == DIV:
-                result = result // term
 
         return result
 
