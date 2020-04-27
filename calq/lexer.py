@@ -1,4 +1,10 @@
 """ Lexer - tokenizes input for an interpreter """
+from calq.ptoken import Token
+
+INTEGER, PLUS, MINUS, MULT, DIV, EOF = "INTEGER", "PLUS", "MINUS", "MULT", "DIV", "EOF"
+OP_LIST = [PLUS, MINUS, MULT, DIV]
+
+
 class Lexer:
     def __init__(self, text):
         self.text = text
@@ -6,7 +12,9 @@ class Lexer:
         self.current_char = self.text[self.pos]
 
     def errors(self):
-        raise Exception(f"Error parsing input: pos - {self.pos} - {self.text} - {self.current_token}")
+        raise Exception(
+            f"Error parsing input: pos - {self.pos} - {self.text} - {self.current_token}"
+        )
 
     def advance(self):
 
@@ -22,7 +30,7 @@ class Lexer:
 
     def integer(self):
 
-        num = ''
+        num = ""
         while self.current_char is not None and self.current_char.isdigit():
             num += self.current_char
             self.advance()
@@ -40,11 +48,11 @@ class Lexer:
             if self.current_char.isdigit():
                 return Token(INTEGER, self.integer())
 
-            if self.current_char is '+':
+            if self.current_char is "+":
                 self.advance()
                 return Token(PLUS, None)
 
-            if self.current_char == '-':
+            if self.current_char == "-":
                 self.advance()
                 return Token(MINUS, None)
 

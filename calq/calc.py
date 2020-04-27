@@ -1,33 +1,21 @@
 import logging
 import sys
 
-
-INTEGER, PLUS, MINUS, MULT, DIV, EOF = "INTEGER", "PLUS", "MINUS", "MULT", "DIV", "EOF"
-OP_LIST = [PLUS, MINUS, MULT, DIV]
+from calq.lexer import Lexer, INTEGER, PLUS, MINUS, MULT, DIV, EOF, OP_LIST
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 consoleHandler = logging.StreamHandler(sys.stdout)
 logger.addHandler(consoleHandler)
 
-class Token:
-    def __init__(self, type, value):
-        self.type = type
-        self.value = value
-
-    def __str__(self):
-        return "Token({}, {})".format(
-            self.type,
-            self.value
-        )
-
-    def __repr__(self):
-        self.__str__()
 
 class Interpreter:
     def __init__(self, lexer):
         self.lexer = lexer
         self.current_token = None
+
+    def errors(self):
+        raise Exception(f"Error interpreting input: {self.current_token}")
 
     def eat(self, token_type):
         logger.debug("EAT - %s - %s", self.current_token, token_type)
@@ -65,8 +53,6 @@ class Interpreter:
         return result
 
 
-
-
 def main():
     while True:
         try:
@@ -80,5 +66,6 @@ def main():
         result = interpreter.expr()
         print(result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
