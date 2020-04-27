@@ -32,6 +32,7 @@ class Interpreter:
     def errors(self):
         raise Exception(f"Error parsing input: pos - {self.pos} - {self.text} - {self.current_token}")
 
+    # Lexer
     def advance(self):
 
         self.pos += 1
@@ -82,6 +83,7 @@ class Interpreter:
 
         return Token(EOF, None)
 
+    # Interpreter
     def eat(self, token_type):
         logger.debug("EAT - %s - %s", self.current_token, token_type)
         if self.current_token.type == token_type:
@@ -89,29 +91,31 @@ class Interpreter:
         else:
             self.errors()
 
+    def term(self):
+        token = self.current_token
+        self.eat(INTEGER)
+        return token.value
+
     def expr(self):
         self.current_token = self.get_next_token()
-        left = self.current_token
-        self.eat(INTEGER)
 
-        result = left.value
+        result = self.term()
 
-        while self.current_token.type != EOF:
+        while self.current_token.type in (PLUS, MINUS, MULT, DIV):
             op = self.current_token
             if op.type in OP_LIST:
                 self.eat(op.type)
 
-            right = self.current_token
-            self.eat(INTEGER)
+            term = self.term()
 
             if op.type == PLUS:
-                result = result + right.value
+                result = result + term
             elif op.type == MINUS:
-                result = result - right.value
+                result = result - term
             elif op.type == MULT:
-                result = result * right.value
+                result = result * term
             elif op.type == DIV:
-                result = result / right.value
+                result = result / term
 
         return result
 
